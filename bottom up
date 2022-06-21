@@ -1,0 +1,55 @@
+#include <iostream> 
+#include <algorithm> 
+#include <string> 
+
+using namespace std; 
+const int r = 5, c = 6; 
+string path[r][c];
+void calCosts() {
+static int weight[r][c] = {{3,4,1,2,8,6},
+                           {6,1,8,2,7,4}, 
+			   {5,9,3,9,9,5}, 
+			   {8,4,1,3,2,6}, 
+                           {3,7,2,8,6,4}	};
+    
+static int memo[r][c] = {0}; 
+for (int i = 0; i < r; i++){ 
+   memo[i][0] = weight[i][0]; 
+   path[i][0] = to_string(i); }
+     
+int minC = 0; 
+for (int j = 1; j < c; j++)
+for (int i = 0; i < r; i++){
+         int up = memo[(i+4)%5][j-1]; 
+	 int left = memo[i][j-1]; 
+	 int down = memo[(i+1)%5][j-1];
+     
+        minC = min(up,min(left, down));
+     
+  if (minC == up)
+      path[i][j] = path[(i+4)%5][j-1] + to_string(i); 
+   if (minC == left)
+      path[i][j] = path[i][j-1] + to_string(i);  
+if (minC == down)
+      path[i][j] = path[(i+1)%5][j-1] + to_string(i); 
+     memo[i][j] = weight[i][j] + minC; }
+    
+int temp[] = {0}; 
+for(int i = 0; i < c; i++) 
+temp[i] = memo[i][5]; 
+int minRow = temp[0]; 
+int index = 0; 
+for(int i = 0; i < c-1; i++){ 
+       if(temp[i] < minRow) {
+         minRow = temp[i]; 
+	 index = i; 
+	} 
+} 
+cout << "The length of the shortest path is " << minRow;
+   cout << ".\nThe rows of the path from left to right are " << path[index][c-1];
+ } 
+
+int main() {
+   calCosts(); 
+	return 0; 
+}
